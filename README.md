@@ -19,6 +19,8 @@ Sourcecode can be found in /piMac_Systemcontroller
 
 ### Power statemachine
 
+![alternative text](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/coconut147/piMac/master/README.md)
+
 ```plantuml
 
 @startuml
@@ -53,3 +55,4 @@ PowerDown -> Running : LongPowerButton pressed
 
 
 ```
+
