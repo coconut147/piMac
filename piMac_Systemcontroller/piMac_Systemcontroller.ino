@@ -5,10 +5,12 @@
 #include "gpio_config.h"
 #include "temp_sensor.h"
 #include "statemachines.h"
-
+#include "statusled.h"
 
 // Globals
 PowerState CurrentPowerState = PowerOn;
+
+class statusled StatusLED(OUT_STATUS_LED);
 
 
 
@@ -20,9 +22,9 @@ void setup()
 
   // Setup outputs
   pinMode(OUT_POWER_5V, OUTPUT);
-  pinMode(OUT_STATUS_LED, OUTPUT);
   pinMode(OUT_DISP_BACKGROUND, OUTPUT);
   pinMode(OUT_SERVO, OUTPUT); 
+
 
   
   
@@ -31,7 +33,10 @@ void setup()
     Serial.begin(9600);
  
   analogWrite(OUT_FAN_12V,180);
-    
+    StatusLED.SwitchState(LedBlinkOn);
+
+
+
 }
 
 
@@ -41,27 +46,22 @@ int statusled = 0;
 
 void loop() 
 {
-  delay(100);
-  Serial.println("Current Temp:");
-  Serial.println(ReadTemp());
+  //delay(100);
+  //Serial.println("Current Temp:");
+  //Serial.println(ReadTemp());
+   
 
-  Serial.print ("I2C SCL: ");
-  Serial.println(analogRead(IN_I2C_SCL));
-  Serial.print ("I2C SDA: ");
-  Serial.println(analogRead(IN_I2C_SDA));
-    
-
-      
+  StatusLED.Operate();    
       
   switch (CurrentPowerState)
   {
     case PowerOn:
       if(digitalRead(IN_POWER_BTN) == LOW)
       {
+        StatusLED.SwitchState(LedOff);
         CurrentPowerState = PowerOff;
         Serial.println("Switch Power off");
         digitalWrite(OUT_POWER_5V, LOW);
-        analogWrite(OUT_STATUS_LED,0);
         for(int tray = 80; tray < 170; tray ++)
         {
            analogWrite(OUT_SERVO,tray);   
@@ -77,6 +77,7 @@ void loop()
     case PowerOff:
       if(digitalRead(IN_POWER_BTN) == LOW)
       {
+        StatusLED.SwitchState(LedBreatheIn);
         CurrentPowerState = PowerOn;
         Serial.println("Switch Power on");
         digitalWrite(OUT_POWER_5V, HIGH);
@@ -91,10 +92,8 @@ void loop()
         for(fanspeed = 10; fanspeed < 255; fanspeed +=1)
         {
           analogWrite(OUT_DISP_BACKGROUND,fanspeed);
-          analogWrite(OUT_STATUS_LED,fanspeed);
           delay(10);
         }
-        analogWrite(OUT_STATUS_LED,100);
         delay(2000);
       }
       

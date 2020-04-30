@@ -32,31 +32,28 @@ PowerDown -> Running : LongPowerButton pressed
 
 @enduml
 
-```
-#Status LED statemachine
-
 ```plantuml
 @startuml
 
-state Off : Initial state
+state LedOff : Initial state
 state Pulsing {
-    state BreatheIn
-    state BreatheOut
-    BreatheIn -> BreatheOut
-    BreatheOut -> BreatheIn
+    state LedBreatheIn
+    state LedBreatheOut
+    LedBreatheIn -> LedBreatheOut
+    LedBreatheOut -> LedBreatheIn
 }
 state Blinking {
-    state BlinkOn
-    State BlinkOff
-    BlinkOn -> BlinkOff
-    BlinkOff->BlinkOn
+    state LedBlinkOn
+    State LedBlinkOff
+    LedBlinkOn -> LedBlinkOff
+    LedBlinkOff->LedBlinkOn
 }
 
-Off --> Pulsing
-Pulsing --> Off
+LedOff --> Pulsing
+Pulsing --> LedOff
 
-Off-->Blinking
-Blinking --> Off
+LedOff-->Blinking
+Blinking --> LedOff
 
 
 @enduml
