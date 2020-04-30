@@ -93,7 +93,7 @@ int statusled = 0;
 
 void loop() 
 {
-
+  
   Serial.println("Current Temp:");
   Serial.println(ReadTemp());
 
@@ -111,7 +111,7 @@ void loop()
         Serial.println("Switch Power off");
         digitalWrite(OUT_POWER_5V, LOW);
         analogWrite(OUT_STATUS_LED,0);
-        for(int tray = 80; tray < 160; tray ++)
+        for(int tray = 80; tray < 170; tray ++)
         {
            analogWrite(OUT_SERVO,tray);   
            delay(5);   
@@ -130,7 +130,7 @@ void loop()
         Serial.println("Switch Power on");
         digitalWrite(OUT_POWER_5V, HIGH);
         
-        for(int tray = 160; tray > 80; tray --)
+        for(int tray = 170; tray > 80; tray --)
         {
            analogWrite(OUT_SERVO,tray);   
            delay(5);   
