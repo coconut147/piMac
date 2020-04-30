@@ -35,6 +35,9 @@ PowerDown -> Running : LongPowerButton pressed
 
 #define IN_TEMP 0
 #define IN_POWER_BTN 2
+#define IN_I2C_SDA 4
+#define IN_I2C_SCL 5
+
 #define OUT_DISP_BACKGROUND 3 
 #define OUT_FAN_12V 5
 #define OUT_STATUS_LED 6
@@ -78,8 +81,8 @@ void setup()
 
   
   
-  // Set defaults
-  digitalWrite(OUT_POWER_5V, LOW);
+  // Set defaultsext 
+  digitalWrite(OUT_POWER_5V, LOW)^;
     Serial.begin(9600);
  
   analogWrite(OUT_FAN_12V,180);
@@ -93,12 +96,15 @@ int statusled = 0;
 
 void loop() 
 {
-  
+  delay(100);
   Serial.println("Current Temp:");
   Serial.println(ReadTemp());
 
-
-
+  Serial.print ("I2C SCL: ");
+  Serial.println(analogRead(IN_I2C_SCL));
+  Serial.print ("I2C SDA: ");
+  Serial.println(analogRead(IN_I2C_SDA));
+    
 
       
       
