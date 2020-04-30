@@ -19,7 +19,7 @@ Sourcecode can be found in /piMac_Systemcontroller
 
 ### Power statemachine
 
-![alternative text](https://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/coconut147/piMac/master/piMac_Systemcontroller/piMac_Systemcontroller.ino)
+![alternative text](https://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/coconut147/piMac/master/piMac_Systemcontroller/statemachines.md)
 
  ### Open points
 
