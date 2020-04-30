@@ -23,4 +23,5 @@ Sourcecode can be found in /piMac_Systemcontroller
 
  ### Open points
 
--  How to identify if pi is off? - I2C port is always pulled up
+- How to identify if pi is off? - I2C port is always pulled up
+- Rendering of plantuml in readme.md fails
