@@ -33,3 +33,32 @@ PowerDown -> Running : LongPowerButton pressed
 @enduml
 
 ```
+#Status LED statemachine
+
+```plantuml
+@startuml
+
+state Off : Initial state
+state Pulsing {
+    state BreatheIn
+    state BreatheOut
+    BreatheIn -> BreatheOut
+    BreatheOut -> BreatheIn
+}
+state Blinking {
+    state BlinkOn
+    State BlinkOff
+    BlinkOn -> BlinkOff
+    BlinkOff->BlinkOn
+}
+
+Off --> Pulsing
+Pulsing --> Off
+
+Off-->Blinking
+Blinking --> Off
+
+
+@enduml
+
+```

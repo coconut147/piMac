@@ -17,7 +17,7 @@ It controls the following features of the piMac:
 Sourcecode can be found in /piMac_Systemcontroller
 
 
-### Power statemachine
+### Statemachines
 
 ![alternative text](https://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/coconut147/piMac/master/piMac_Systemcontroller/statemachines.md)
 
