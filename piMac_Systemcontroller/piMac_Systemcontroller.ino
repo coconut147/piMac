@@ -12,10 +12,10 @@ state Booting : RaspberryPi switched on. \nFan running, Display off\nLED pulsing
 
 NoPower --> PowerDown
 PowerDown --> Booting : PowerButton pressed
-Booting --> Running : I2C active
+Booting --> Running : ??? Pi Power Down detected 
 Booting --> Running : 15s timeout
 Running --> Shutdown : PowerButton pressed
-Shutdown --> PowerDown : I2C inactive
+Shutdown --> PowerDown : ??? Pi Power Down detected
 Shutdown --> PowerDown : 15s timeout
 
 'I2C messages
