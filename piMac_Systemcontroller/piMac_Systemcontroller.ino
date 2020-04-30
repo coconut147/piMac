@@ -82,7 +82,7 @@ void setup()
   
   
   // Set defaultsext 
-  digitalWrite(OUT_POWER_5V, LOW)^;
+  digitalWrite(OUT_POWER_5V, LOW);
     Serial.begin(9600);
  
   analogWrite(OUT_FAN_12V,180);
