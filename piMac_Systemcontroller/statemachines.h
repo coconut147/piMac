@@ -11,20 +11,5 @@ typedef enum
   PowerOff
 } PowerState;
 
-typedef enum 
-{
-  LedOff,
-  LedBreatheIn,
-  LedBreatheOut,
-  LedBlinkOn,
-  LedBlinkOff
-} LEDstate;
-
-
-
-
-
-
-
 
 #endif

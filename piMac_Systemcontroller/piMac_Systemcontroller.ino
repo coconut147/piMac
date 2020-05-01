@@ -7,6 +7,9 @@
 #include "statemachines.h"
 #include "statusled.h"
 
+
+using namespace piMac;
+
 // Globals
 PowerState CurrentPowerState = PowerOn;
 
