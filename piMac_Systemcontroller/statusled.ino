@@ -1,4 +1,3 @@
-#include "gpio_config.h"
 #include "statusled.h"
 
 
