@@ -1,5 +1,5 @@
-#ifndef STATUS_LED_H
-#define STATUS_LED_H
+#ifndef PIMAC_STATUS_LED_H
+#define PIMAC_STATUS_LED_H
 
 namespace piMac
 {
