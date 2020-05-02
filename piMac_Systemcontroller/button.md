@@ -37,7 +37,10 @@ state ButtonReleased: The button was released\nCheck timestamps between\nuser ac
 
 Idle --> ButtonPressed : FallingEdge
 ButtonPressed --> ButtonReleased : RisingEdge
+ButtonPressed --> Idle : GetLastButtonAction &&\nPressed for >= 3 seconds
 ButtonReleased --> Idle 
+
+Idle -up-> Idle : RisingEdge 
 
 @enduml
 

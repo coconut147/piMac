@@ -64,7 +64,7 @@ namespace piMac
                     // Ignore, it just bounced
                     // Note: Do not overwrite LastAction
                 }
-                else if(Duration < 3000)
+                else if(Duration < LongPressDuration)
                 {
                     // Short press
                     LastAction = ShortPress;
@@ -83,7 +83,32 @@ namespace piMac
 
     buttonaction button::GetLastButtonAction()
     {
-        buttonaction retval = this->LastAction;
+        buttonaction retval = None;
+        // In general it would be sufficient to return 
+        // the LastAction. As we want to return a "LongPress"
+        // when the Button is still pressed, we need 
+        // to do somthing more.
+        // TODO: Concurrency of CurrentState with ISR...
+
+        if(CurrentState == ButtonPressed)
+        {
+            uint32_t Duration; // Button press in ms
+            Duration  = millis() - LastFallTime;
+            if(Duration >= LongPressDuration)
+            {
+                retval = LongPress;
+                CurrentState = Idle;
+            }
+            else
+            {
+                retval = this->LastAction;
+            }
+        }
+        else
+        {
+            retval = this->LastAction;
+        }
+
         this->LastAction = None;  // Reset Last Action
         return retval;
     }

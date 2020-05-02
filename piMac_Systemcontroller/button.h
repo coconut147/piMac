@@ -22,6 +22,7 @@ namespace piMac
     
     class button : interrupthandler_interface
     {
+        const uint32_t LongPressDuration = 3000; // Duration in ms
     private:
         uint8_t gpio;
         uint32_t LastRiseTime;
