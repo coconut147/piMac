@@ -11,7 +11,7 @@
 using namespace piMac;
 
 // Globals
-PowerState CurrentPowerState = PowerOn;
+PowerState CurrentPowerState = PowerOff;
 
 class statusled StatusLED(OUT_STATUS_LED);
 class button PowerButton(IN_POWER_BTN);
@@ -28,7 +28,7 @@ void setup()
   pinMode(OUT_SERVO, OUTPUT); 
 
 
-  
+  analogWrite(OUT_SERVO,170);   
   
   // Set defaultsext 
   digitalWrite(OUT_POWER_5V, LOW);
@@ -45,13 +45,11 @@ void setup()
 
 int fanspeed = 0;
 int statusled = 0;
+bool trayOpen = false;
 
 void loop() 
 {
-  //delay(100);
-  //Serial.println("Current Temp:");
-  //Serial.println(ReadTemp());
-   
+
 
   StatusLED.Operate();    
       
@@ -73,45 +71,69 @@ void loop()
   switch (CurrentPowerState)
   {
     case PowerOn:
-      if(digitalRead(IN_POWER_BTN) == LOW)
+      if (LastButton == LongPress)
       {
         StatusLED.SwitchState(LedOff);
         CurrentPowerState = PowerOff;
         Serial.println("Switch Power off");
         digitalWrite(OUT_POWER_5V, LOW);
-        for(int tray = 80; tray < 170; tray ++)
+        if(trayOpen)
         {
-           analogWrite(OUT_SERVO,tray);   
-           delay(5);   
+          Serial.println("Closing tray");
+          for(int tray = 80; tray < 170; tray ++)
+          {
+            analogWrite(OUT_SERVO,tray);   
+            delay(5);   
+          }
+          trayOpen = false;
         }
         analogWrite(OUT_FAN_12V,0); 
         analogWrite(OUT_DISP_BACKGROUND,0);
         
-        delay(2000);
+      }
+      else if(LastButton == ShortPress)
+      {
+        if(trayOpen)
+        {
+          Serial.println("Closing tray");
+          for(int tray = 80; tray < 170; tray ++)
+          {
+            analogWrite(OUT_SERVO,tray);   
+            delay(5);   
+          }
+          StatusLED.SwitchState(LedBreatheIn);
+          trayOpen = false;
+        }
+        else
+        {
+          Serial.println("Opening tray");
+          for(int tray = 170; tray > 80; tray --)
+          {
+            analogWrite(OUT_SERVO,tray);   
+            delay(5);   
+          }
+          StatusLED.SwitchState(LedBlinkOn);
+          trayOpen = true;
+        }
       }
       
     break;
     case PowerOff:
-      if(digitalRead(IN_POWER_BTN) == LOW)
+      if(LastButton == ShortPress)
       {
         StatusLED.SwitchState(LedBreatheIn);
         CurrentPowerState = PowerOn;
         Serial.println("Switch Power on");
         digitalWrite(OUT_POWER_5V, HIGH);
         
-        for(int tray = 170; tray > 80; tray --)
-        {
-           analogWrite(OUT_SERVO,tray);   
-           delay(5);   
-        }
+
         
-        analogWrite(OUT_FAN_12V,255);          
+        analogWrite(OUT_FAN_12V,100);          
         for(fanspeed = 10; fanspeed < 255; fanspeed +=1)
         {
           analogWrite(OUT_DISP_BACKGROUND,fanspeed);
           delay(10);
         }
-        delay(2000);
       }
       
     break;
