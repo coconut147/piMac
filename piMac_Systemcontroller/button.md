@@ -14,6 +14,8 @@ The internal pull up resistor of the arduino will be used, so no external resist
 
 The function ```millis()```is used as timing source. 
 
+Depends on ``interrupthandler.h`` as Interruptsource.
+
 ## Usage
 
 The gpio has to be set as parameter in the constructor. 
