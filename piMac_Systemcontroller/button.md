@@ -19,6 +19,9 @@ The function ```millis()```is used as timing source.
 The gpio has to be set as parameter in the constructor. 
 The gpio must be interrupt capable, otherwise this driver can't be used. 
 
+Call ``buttonaction GetLastButtonAction()`` to read the last button press. 
+**NOTE:** The call will reset the last Button action -> a 2nd call will return ``None``
+
 #Button driver statemachine
 
 
