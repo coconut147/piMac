@@ -6,7 +6,7 @@
 #include "temp_sensor.h"
 #include "statemachines.h"
 #include "statusled.h"
-
+#include "button.h"
 
 using namespace piMac;
 
@@ -14,8 +14,7 @@ using namespace piMac;
 PowerState CurrentPowerState = PowerOn;
 
 class statusled StatusLED(OUT_STATUS_LED);
-
-
+class button PowerButton(IN_POWER_BTN);
 
  
 void setup() 
@@ -38,7 +37,7 @@ void setup()
   analogWrite(OUT_FAN_12V,180);
     StatusLED.SwitchState(LedBlinkOn);
 
-
+  Serial.println("...do you smell the coffee!?");
 
 }
 
@@ -56,6 +55,21 @@ void loop()
 
   StatusLED.Operate();    
       
+  buttonaction LastButton = PowerButton.GetLastButtonAction();
+
+  if(LastButton == ShortPress)
+  {
+    StatusLED.SwitchState(LedBlinkOn);
+    Serial.println("Short Press");
+  }
+  else if (LastButton == LongPress)
+  {
+    StatusLED.SwitchState(LedBreatheIn);
+    Serial.println("Long Press");
+  }
+  
+
+
   switch (CurrentPowerState)
   {
     case PowerOn:
