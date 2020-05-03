@@ -62,7 +62,6 @@ namespace piMac
                 }
                 break;
             case Opening:
-
                 if((CurrentPWMValue + 20) > PWMClosed)
                 {
                     if((CurrentTime - LastChange) >= 50)
@@ -94,18 +93,27 @@ namespace piMac
                 }
                 break;
             case Closing:
-                if((CurrentTime - LastChange) >= 7)
+                if(CurrentPWMValue < (PWMClosed - 20))
                 {
-                    if(CurrentPWMValue < PWMClosed)
+                    if((CurrentTime - LastChange) >= 25)
                     {
                         CurrentPWMValue++;
                         LastChange = CurrentTime;
-                    }
-                    else
-                    {
-                        CurrentState = Closed;
-                    }
+                    }    
                 }
+                else if(CurrentPWMValue < PWMClosed)
+                {
+                    if((CurrentTime - LastChange) >= 100)
+                    {
+                        CurrentPWMValue++;
+                        LastChange = CurrentTime;
+                    }    
+                }
+                else
+                {
+                    CurrentState = Closed;
+                }
+            
                 break;
             default:
                 break;
