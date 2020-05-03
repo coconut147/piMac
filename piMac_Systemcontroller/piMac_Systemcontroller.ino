@@ -1,12 +1,9 @@
-
-
-
-
 #include "gpio_config.h"
 #include "temp_sensor.h"
 #include "statemachines.h"
 #include "statusled.h"
 #include "button.h"
+#include "tray.h"
 
 using namespace piMac;
 
@@ -15,8 +12,8 @@ PowerState CurrentPowerState = PowerOff;
 
 class statusled StatusLED(OUT_STATUS_LED);
 class button PowerButton(IN_POWER_BTN);
+class tray FrontTray(OUT_SERVO);
 
- 
 void setup() 
 {
   // Setup inputs
@@ -25,48 +22,26 @@ void setup()
   // Setup outputs
   pinMode(OUT_POWER_5V, OUTPUT);
   pinMode(OUT_DISP_BACKGROUND, OUTPUT);
-  pinMode(OUT_SERVO, OUTPUT); 
-
-
-  analogWrite(OUT_SERVO,170);   
   
-  // Set defaultsext 
+  // Set defaults
   digitalWrite(OUT_POWER_5V, LOW);
-    Serial.begin(9600);
+  Serial.begin(9600);
  
   analogWrite(OUT_FAN_12V,180);
-    StatusLED.SwitchState(LedBlinkOn);
+  StatusLED.SwitchState(LedBlinkOn);
 
   Serial.println("...do you smell the coffee!?");
-
 }
 
 
 
 int fanspeed = 0;
-int statusled = 0;
-bool trayOpen = false;
 
 void loop() 
 {
-
-
   StatusLED.Operate();    
-      
+  FrontTray.Operate();      
   buttonaction LastButton = PowerButton.GetLastButtonAction();
-
-  if(LastButton == ShortPress)
-  {
-    StatusLED.SwitchState(LedBlinkOn);
-    Serial.println("Short Press");
-  }
-  else if (LastButton == LongPress)
-  {
-    StatusLED.SwitchState(LedBreatheIn);
-    Serial.println("Long Press");
-  }
-  
-
 
   switch (CurrentPowerState)
   {
@@ -77,44 +52,14 @@ void loop()
         CurrentPowerState = PowerOff;
         Serial.println("Switch Power off");
         digitalWrite(OUT_POWER_5V, LOW);
-        if(trayOpen)
-        {
-          Serial.println("Closing tray");
-          for(int tray = 80; tray < 170; tray ++)
-          {
-            analogWrite(OUT_SERVO,tray);   
-            delay(5);   
-          }
-          trayOpen = false;
-        }
+        FrontTray.Close();
         analogWrite(OUT_FAN_12V,0); 
         analogWrite(OUT_DISP_BACKGROUND,0);
         
       }
       else if(LastButton == ShortPress)
       {
-        if(trayOpen)
-        {
-          Serial.println("Closing tray");
-          for(int tray = 80; tray < 170; tray ++)
-          {
-            analogWrite(OUT_SERVO,tray);   
-            delay(5);   
-          }
-          StatusLED.SwitchState(LedBreatheIn);
-          trayOpen = false;
-        }
-        else
-        {
-          Serial.println("Opening tray");
-          for(int tray = 170; tray > 80; tray --)
-          {
-            analogWrite(OUT_SERVO,tray);   
-            delay(5);   
-          }
-          StatusLED.SwitchState(LedBlinkOn);
-          trayOpen = true;
-        }
+        FrontTray.Toggle();
       }
       
     break;
@@ -125,10 +70,7 @@ void loop()
         CurrentPowerState = PowerOn;
         Serial.println("Switch Power on");
         digitalWrite(OUT_POWER_5V, HIGH);
-        
-
-        
-        analogWrite(OUT_FAN_12V,100);          
+        analogWrite(OUT_FAN_12V,50);          
         for(fanspeed = 10; fanspeed < 255; fanspeed +=1)
         {
           analogWrite(OUT_DISP_BACKGROUND,fanspeed);
@@ -140,4 +82,5 @@ void loop()
     default:
     break;
   }
+  
 }
