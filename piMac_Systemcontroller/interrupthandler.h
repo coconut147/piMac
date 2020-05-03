@@ -20,13 +20,12 @@ namespace piMac
     class interrupthandler 
     {
         private: 
-        static void ISRRisingEdge();
-        static void ISRFallingEdge();
+        static void ISRChange();
         interrupthandler::interrupthandler(); // We don't want anyone to instatiate that class
 
         static interrupthandler_interface* RegisteredClass;
         static uint8_t gpio;
-
+        static int LastLevel;
         public: 
         static void RegisterForInterrupt(interrupthandler_interface* interface, uint8_t gpio);
     };
