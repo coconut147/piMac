@@ -11,7 +11,7 @@ namespace piMac
     void interrupthandler::RegisterForInterrupt(interrupthandler_interface* interface, uint8_t gpio)
     {
         interrupthandler::gpio = gpio;
-        attachInterrupt(digitalPinToInterrupt(gpio), interrupthandler::ISRRisingEdge, RISING);
+        attachInterrupt(digitalPinToInterrupt(gpio), interrupthandler::ISRFallingEdge, FALLING);
 
         RegisteredClass = interface;
         return;
