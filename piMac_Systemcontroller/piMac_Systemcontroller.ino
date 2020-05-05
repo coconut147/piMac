@@ -4,6 +4,7 @@
 #include "statusled.h"
 #include "button.h"
 #include "tray.h"
+#include "fancontroller.h"
 
 using namespace piMac;
 
@@ -13,7 +14,7 @@ PowerState CurrentPowerState = PowerOff;
 class statusled StatusLED(OUT_STATUS_LED);
 class button PowerButton(IN_POWER_BTN);
 class tray FrontTray(OUT_SERVO);
-
+class fancontroller ChassisFan(OUT_FAN_12V,IN_TEMP);
 void setup() 
 {
   // Setup inputs
@@ -27,7 +28,7 @@ void setup()
   digitalWrite(OUT_POWER_5V, LOW);
   Serial.begin(9600);
  
-  analogWrite(OUT_FAN_12V,180);
+  
   StatusLED.SwitchState(LedBlinkOn);
 
   Serial.println("...do you smell the coffee!?");
@@ -40,7 +41,8 @@ int fanspeed = 0;
 void loop() 
 {
   StatusLED.Operate();    
-  FrontTray.Operate();      
+  FrontTray.Operate();   
+  ChassisFan.Operate();   
   buttonaction LastButton = PowerButton.GetLastButtonAction();
 
   switch (CurrentPowerState)
@@ -69,8 +71,7 @@ void loop()
         StatusLED.SwitchState(LedBreatheIn);
         CurrentPowerState = PowerOn;
         Serial.println("Switch Power on");
-        digitalWrite(OUT_POWER_5V, HIGH);
-        analogWrite(OUT_FAN_12V,50);          
+        digitalWrite(OUT_POWER_5V, HIGH);       
         for(fanspeed = 10; fanspeed < 255; fanspeed +=1)
         {
           analogWrite(OUT_DISP_BACKGROUND,fanspeed);
