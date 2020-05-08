@@ -5,9 +5,20 @@ namespace piMac
 {
 
 
+    typedef enum
+    {
+        Off,
+        Auto,
+        ManualLow,
+        ManualMid,
+        ManualHigh
+    } CoolingState;
+
+
     class fancontroller
     {
     private:
+        CoolingState CurrentState;
         float CurrentTemperature;
         uint8_t CurrentFanSpeed; // Fan speed in percent
         uint8_t gpio_temp;
@@ -23,6 +34,8 @@ namespace piMac
         fancontroller(int gpio_fan, int gpio_temp);
         ~fancontroller();
 
+        void Activate();
+        void Deactivate();
 
         void Operate();
     };

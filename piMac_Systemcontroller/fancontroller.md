@@ -6,12 +6,14 @@ A good functionality could be to switch the fan controller to a manual mode. (e.
 
 ## Control algorithm
 
-The control algorithm should check every 100ms for the current temperature.
+The control algorithm should check every 5000ms for the current temperature.
 After this an algorithm should control the speed of the fan according to that reading. 
 
 First implementation:
 
 ### ProportionalControl
+
+Note: The following assumptions are subject to be changed.
 
 Calculation: 
 
@@ -40,3 +42,23 @@ PWM Control ranges from 0 to 255. The used transistor, fan and capacitor combina
 This leads to a linear control possibility.
 
 PWM Value = FanSpeed * 2.55
+
+## Cooling states
+
+```plantuml
+@startuml
+state Off
+state AutoPassive
+state AutoActive
+state ManualLow
+state ManualMid
+state ManualHigh
+
+[*] --> Off
+Off --> AutoActive : Call Activate 
+AutoPassive --> AutoActive : Fan Control exceeds\nThresholdOn
+
+AutoActive --> Off : Call Deactivate
+AutoPassive --> Off : Call Deactivate
+@enduml
+```

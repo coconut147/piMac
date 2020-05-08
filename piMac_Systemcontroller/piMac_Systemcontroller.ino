@@ -45,6 +45,7 @@ void loop()
   ChassisFan.Operate();   
   buttonaction LastButton = PowerButton.GetLastButtonAction();
 
+
   switch (CurrentPowerState)
   {
     case PowerOn:
@@ -57,7 +58,7 @@ void loop()
         FrontTray.Close();
         analogWrite(OUT_FAN_12V,0); 
         analogWrite(OUT_DISP_BACKGROUND,0);
-        
+        ChassisFan.Deactivate();
       }
       else if(LastButton == ShortPress)
       {
@@ -72,11 +73,9 @@ void loop()
         CurrentPowerState = PowerOn;
         Serial.println("Switch Power on");
         digitalWrite(OUT_POWER_5V, HIGH);       
-        for(fanspeed = 10; fanspeed < 255; fanspeed +=1)
-        {
-          analogWrite(OUT_DISP_BACKGROUND,fanspeed);
-          delay(10);
-        }
+ 
+        analogWrite(OUT_DISP_BACKGROUND,255);
+        ChassisFan.Activate();
       }
       
     break;

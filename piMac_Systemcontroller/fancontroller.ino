@@ -5,28 +5,49 @@
 
 namespace piMac
 {
+
+
     fancontroller::fancontroller(int gpio_fan, int gpio_temp)
     {
         this->gpio_temp = gpio_temp;
         this->gpio_fan = gpio_fan;
         this->TimeReference = 0; 
         this->CurrentFanSpeed = 0;
+        CurrentState = Off;
         // Setup Hardware
         pinMode(this->gpio_fan, OUTPUT);
         SetFanSpeed();
+        
     }
 
     fancontroller::~fancontroller()
     {
-
+        this->CurrentFanSpeed = 0;
+        CurrentState = Off;
     }
+
+    void fancontroller::Activate()
+    {
+        uint32_t ActualTime = millis();
+        TimeReference = ActualTime;
+        this->CurrentFanSpeed = 90;
+        CurrentState = Auto;
+        SetFanSpeed();
+    }
+    void fancontroller::Deactivate()
+    {
+        this->CurrentFanSpeed = 0;
+        CurrentState = Off;
+        SetFanSpeed();
+    }
+
 
     void fancontroller::Operate()
     {
         uint32_t ActualTime = millis();
         uint32_t TimeDifference = ActualTime - TimeReference;
         uint8_t NewFanSpeed = CurrentFanSpeed;
-        if(TimeDifference >= 100)
+        if(TimeDifference >= 5000)
         {
             CurrentTemperature = ReadTemperature();
            // Currently we have only Proportional ProportionalControl
@@ -41,8 +62,6 @@ namespace piMac
                 Serial.print ("% - Temperature ");
                 Serial.print(CurrentTemperature);
                 Serial.println("°C");
-                
-                
             }
 
             TimeReference = ActualTime;
@@ -84,15 +103,27 @@ namespace piMac
         uint8_t PWMValue;
         uint8_t FanSpeed = CurrentFanSpeed;
 
-        if(CurrentFanSpeed >= 100)
+        switch(CurrentState)
         {
-            FanSpeed = 100;
+            case Off:
+                FanSpeed = 0;
+                break;
+            case Auto:
+                if(FanSpeed < 3)
+                {
+                    FanSpeed = 3; // Minimum 3% to avoid stalling of the fan
+                }
+                else if(FanSpeed >= 100)
+                {
+                    FanSpeed = 100;
+                }
+                break;
+            default:
+                FanSpeed = 100;
+                break;
         }
-        else if(CurrentFanSpeed < 5)
-        {
-            FanSpeed = 0;
-        }
-        
+
+
         PWMValue = (uint8_t)(FanSpeed * 2.55);
         Serial.print("Set Current FanPWM to ");
         Serial.println(PWMValue);
