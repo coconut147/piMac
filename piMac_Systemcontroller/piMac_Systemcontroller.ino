@@ -37,19 +37,24 @@ void setup()
 
 
 int fanspeed = 0;
+uint32_t TimeReference;
 
 void loop() 
 {
+  int rpi_tx_voltage; // stores the Raspberries Serial TX voltage
+
   StatusLED.Operate();    
   FrontTray.Operate();   
   ChassisFan.Operate();   
   buttonaction LastButton = PowerButton.GetLastButtonAction();
 
+  rpi_tx_voltage = analogRead(IN_RPI_TX);
+
 
   switch (CurrentPowerState)
   {
     case PowerOn:
-      if (LastButton == LongPress)
+      if (LastButton == LongPress || (millis() - TimeReference > 15000))  
       {
         StatusLED.SwitchState(LedOff);
         CurrentPowerState = PowerOff;
@@ -64,7 +69,17 @@ void loop()
       {
         FrontTray.Toggle();
       }
-      
+      if(rpi_tx_voltage > 500)
+      {
+          analogWrite(OUT_DISP_BACKGROUND,255);
+          TimeReference = millis();
+      }
+      else
+      {
+          analogWrite(OUT_DISP_BACKGROUND,0);
+      }
+
+
     break;
     case PowerOff:
       if(LastButton == ShortPress)
@@ -74,8 +89,9 @@ void loop()
         Serial.println("Switch Power on");
         digitalWrite(OUT_POWER_5V, HIGH);       
  
-        analogWrite(OUT_DISP_BACKGROUND,255);
+        
         ChassisFan.Activate();
+        TimeReference = millis();
       }
       
     break;

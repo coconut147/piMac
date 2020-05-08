@@ -3,6 +3,7 @@
 
 
 #define IN_TEMP 0
+#define IN_RPI_TX 1
 #define IN_POWER_BTN 2
 #define IN_I2C_SDA 4
 #define IN_I2C_SCL 5
