@@ -21,7 +21,7 @@ namespace piMac
     {
         private: 
         static void ISRChange();
-        interrupthandler::interrupthandler(); // We don't want anyone to instatiate that class
+        interrupthandler(); // We don't want anyone to instatiate that class
 
         static interrupthandler_interface* RegisteredClass;
         static uint8_t gpio;
