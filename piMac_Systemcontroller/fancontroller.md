@@ -9,11 +9,9 @@ A good functionality could be to switch the fan controller to a manual mode. (e.
 The control algorithm should check every 5000ms for the current temperature.
 After this an algorithm should control the speed of the fan according to that reading. 
 
-First implementation:
+**Note:** The fan will be set to a minimum of 3% speed to avoid stalling of the fan. This also leads to a constant airflow even with moderate temperatures. This tradeoff is acceptable as the used fan is very quiet at low speeds.  
 
 ### ProportionalControl
-
-Note: The following assumptions are subject to be changed.
 
 Calculation: 
 
@@ -34,7 +32,6 @@ FanSpeed = (Temperature - 35.0) * 5
 Even when the fan is unable to spin faster than 100%, the controller should output an overdrive. 
 If other controllers are involved, the proportional controller should have higher impact in *critical* situations. 
 
-
 ## PWM Control
 
 PWM Control ranges from 0 to 255. The used transistor, fan and capacitor combination allows to drive the fan from 1 to 255 (some fans don't move when set too low)
@@ -45,20 +42,25 @@ PWM Value = FanSpeed * 2.55
 
 ## Cooling states
 
+    typedef enum
+    {
+        Off,
+        Auto,
+        ManualLow,
+        ManualMid,
+        ManualHigh
+    } CoolingState;
+
 ```plantuml
 @startuml
-state Off
-state AutoPassive
-state AutoActive
+state Off : Fan is switched off\nNo active cooling
+state Auto : Temperature control active\n(12V must be present)
 state ManualLow
 state ManualMid
 state ManualHigh
 
 [*] --> Off
-Off --> AutoActive : Call Activate 
-AutoPassive --> AutoActive : Fan Control exceeds\nThresholdOn
-
-AutoActive --> Off : Call Deactivate
-AutoPassive --> Off : Call Deactivate
+Off --> Auto : Call Activate 
+Auto --> Off : Call Deactivate
 @enduml
 ```
