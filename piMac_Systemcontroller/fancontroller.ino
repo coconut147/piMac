@@ -16,8 +16,7 @@ namespace piMac
         CurrentState = Off;
         // Setup Hardware
         pinMode(this->gpio_fan, OUTPUT);
-        SetFanSpeed();
-        
+        SetFanSpeed(CurrentFanSpeed);
     }
 
     fancontroller::~fancontroller()
@@ -28,43 +27,70 @@ namespace piMac
 
     void fancontroller::Activate()
     {
-        uint32_t ActualTime = millis();
-        TimeReference = ActualTime;
-        this->CurrentFanSpeed = 90;
+        TimeReference = 0;
         CurrentState = Auto;
-        SetFanSpeed();
+        Operate();
     }
     void fancontroller::Deactivate()
     {
-        this->CurrentFanSpeed = 0;
         CurrentState = Off;
-        SetFanSpeed();
+        Operate();
     }
 
+    void fancontroller::SetModeAuto()
+    {
+        TimeReference = 0;
+        CurrentState = Auto;
+        Operate();
+    }
+    void fancontroller::SetModeManualHigh()
+    {
+        CurrentState = ManualHigh;
+        Operate();
+    }
+    
 
     void fancontroller::Operate()
     {
         uint32_t ActualTime = millis();
         uint32_t TimeDifference = ActualTime - TimeReference;
         uint8_t NewFanSpeed = CurrentFanSpeed;
-        if(TimeDifference >= 5000)
-        {
-            CurrentTemperature = ReadTemperature();
-           // Currently we have only Proportional ProportionalControl
-            NewFanSpeed = ProportionalControl(); 
- 
-            if(CurrentFanSpeed != NewFanSpeed)
-            {
-                CurrentFanSpeed = NewFanSpeed;
-                SetFanSpeed();
-                Serial.print("Set Current Fanspeed to ");
-                Serial.print(CurrentFanSpeed);
-                Serial.print ("% - Temperature ");
-                Serial.print(CurrentTemperature);
-                Serial.println("°C");
-            }
 
-            TimeReference = ActualTime;
+        switch(CurrentState)
+        {
+            case Off:
+                NewFanSpeed = 0;
+                break;
+            case Auto:
+                if(TimeDifference >= 5000)
+                {
+                    CurrentTemperature = ReadTemperature();
+                    // Currently we have only ProportionalControl
+                    NewFanSpeed = ProportionalControl(); 
+                    TimeReference = ActualTime;
+                    if(NewFanSpeed < 3)
+                    {
+                        NewFanSpeed = 3; // Minimum 3% to avoid stalling of the fan
+                    }
+                }
+                break;
+            case ManualHigh:
+                NewFanSpeed = 100;
+                break;
+            default:
+                NewFanSpeed = 100;
+                break;
+        }
+
+        if(CurrentFanSpeed != NewFanSpeed)
+        {
+            CurrentFanSpeed = NewFanSpeed;
+            SetFanSpeed(CurrentFanSpeed);
+            Serial.print("Set Current Fanspeed to ");
+            Serial.print(CurrentFanSpeed);
+            Serial.print ("% - Temperature ");
+            Serial.print(CurrentTemperature);
+            Serial.println("°C");
         }
     }
 
@@ -98,36 +124,15 @@ namespace piMac
         return tempC;
     }
 
-    void fancontroller::SetFanSpeed()
+    void fancontroller::SetFanSpeed(uint8_t FanSpeed)
     {
         uint8_t PWMValue;
-        uint8_t FanSpeed = CurrentFanSpeed;
 
-        switch(CurrentState)
+        if(FanSpeed >= 100)
         {
-            case Off:
-                FanSpeed = 0;
-                break;
-            case Auto:
-                if(FanSpeed < 3)
-                {
-                    FanSpeed = 3; // Minimum 3% to avoid stalling of the fan
-                }
-                else if(FanSpeed >= 100)
-                {
-                    FanSpeed = 100;
-                }
-                break;
-            default:
-                FanSpeed = 100;
-                break;
+            FanSpeed = 100;
         }
-
-
         PWMValue = (uint8_t)(FanSpeed * 2.55);
-        Serial.print("Set Current FanPWM to ");
-        Serial.println(PWMValue);
-
         analogWrite(this->gpio_fan,PWMValue);
     }
 

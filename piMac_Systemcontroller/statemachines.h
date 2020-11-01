@@ -7,8 +7,11 @@
 
 typedef enum 
 {
-  PowerOn,
-  PowerOff
+  NoPower,
+  Booting,
+  PowerDown,
+  Running,
+  Shutdown
 } PowerState;
 
 

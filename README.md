@@ -23,4 +23,4 @@ Sourcecode can be found in /piMac_Systemcontroller
 
  ### Open points
 
-- How to identify if pi is off? - I2C port is always pulled up
+- Communication between pi and Systemcontroller for display control (e..g screensaver)

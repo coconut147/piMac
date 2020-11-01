@@ -57,10 +57,14 @@ state Off : Fan is switched off\nNo active cooling
 state Auto : Temperature control active\n(12V must be present)
 state ManualLow
 state ManualMid
-state ManualHigh
+state ManualHigh : Manual mode without temp control\nat highest possible speed
 
 [*] --> Off
 Off --> Auto : Call Activate 
+Off --> ManualHigh : Call ManualHigh
 Auto --> Off : Call Deactivate
+Auto --> ManualHigh : Call ManualHigh
+ManualHigh --> Auto : Call Auto
+ManualHigh --> Off : Call Deactivate
 @enduml
 ```

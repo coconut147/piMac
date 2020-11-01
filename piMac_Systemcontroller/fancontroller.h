@@ -26,7 +26,7 @@ namespace piMac
         uint32_t TimeReference;
 
         float ReadTemperature();
-        void SetFanSpeed(); // Sets PWM Value of fan to CurrentFanSpeed
+        void SetFanSpeed(uint8_t FanSpeed); // Sets PWM Value of fan to FanSpeed
         uint8_t ProportionalControl(); // Does the proportional controlling based on CurrentTemperature. Returns FanSpeed in %
 
 
@@ -36,6 +36,8 @@ namespace piMac
 
         void Activate();
         void Deactivate();
+        void SetModeAuto();
+        void SetModeManualHigh();
 
         void Operate();
     };
